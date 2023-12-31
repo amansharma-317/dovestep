@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:startup/feautures/auth/data/data_sources/auth_data_source.dart';
 import 'package:startup/feautures/auth/data/repository/auth_repository_impl.dart';
@@ -8,6 +9,20 @@ class AuthStateNotifier extends StateNotifier<bool> {
   final AuthRepository _authRepository;
   //initialize with initial state false -> meaning 'not authenticated'
   AuthStateNotifier(this._authRepository) : super(false);
+
+  Future<void> init() async {
+    try {
+      final user = await FirebaseAuth.instance.currentUser;
+      if (user != null) {
+        state = true; // User is still authenticated
+      } else {
+        state = false; // User is no longer authenticated
+      }
+    } catch (e) {
+      print('Error checking Firebase Auth: $e');
+      state = false; // Assume not authenticated in case of errors
+    }
+  }
 
   void setAuthenticated(bool isAuthenticated) {
     state = isAuthenticated;
