@@ -1,9 +1,13 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:startup/config/utils/const.dart';
 import 'package:startup/core/models/user_model.dart';
 import 'package:startup/core/providers/user_provider.dart';
+import 'package:startup/feautures/chat/presentation/providers/matching_provider.dart';
+import 'package:startup/feautures/chat/presentation/screens/my_chats.dart';
 
 class Dashboard extends ConsumerWidget {
   const Dashboard({Key? key}) : super(key: key);
@@ -23,6 +27,7 @@ class Dashboard extends ConsumerWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
+                  //appbar and big-box stack
                   Container(
                     height: height*0.52,
                     child: Stack(
@@ -44,10 +49,10 @@ class Dashboard extends ConsumerWidget {
                                 children: [
                                   CircleAvatar(backgroundImage: AssetImage("assets/images/profileicon.png"),radius: 16,),
                                   Spacer(),
-                                  CircleAvatar(backgroundImage: AssetImage("assets/images/img.png"),radius: 16,),
+                                  Icon(Icons.notifications_none_rounded),
                                 ],
                               ),
-                              SizedBox(height: 16,),
+                              SizedBox(height: 12,),
                               userProfileFuture.when(
                                 data: (user) {
                                   // Print the user data to the console
@@ -56,8 +61,16 @@ class Dashboard extends ConsumerWidget {
                                   // Return a multiline Text widget
                                   return Column(
                                     children: [
-                                      Text("Good morning,"),
-                                      Text(user!.username, style: AppTextStyles.font_poppins),
+                                      Text("   Good morning,", style: AppTextStyles.font_lato.copyWith(fontSize: 16),),
+                                      SizedBox(height: 8,),
+                                      FittedBox(
+                                        alignment: Alignment.centerLeft,
+                                        fit: BoxFit.contain,
+                                        child: Text(
+                                            user!.username,
+                                            style: AppTextStyles.font_poppins.copyWith(fontWeight: FontWeight.w600),
+                                        ),
+                                      ),
                                     ],
                                   );
                                 },
@@ -75,7 +88,7 @@ class Dashboard extends ConsumerWidget {
                             child: Container(
                               margin: EdgeInsets.symmetric(horizontal: 16 ),
                               width: width-32,
-                              height: height*0.36,
+                              height: height*0.35,
                               padding: EdgeInsets.all(16),
                               decoration: BoxDecoration(
                                   color: Color(0xFF88AB8E),
@@ -88,20 +101,49 @@ class Dashboard extends ConsumerWidget {
                                     children: [
                                       Column(children: [
                                         Container(
-                                          height: height*0.15,
-                                          child: Image.asset("assets/images/wheel.png",fit: BoxFit.fill,),
+                                          height: height*0.14,
+                                          width: 120 ,
+                                          child: Image.asset("assets/images/cartoon.png",fit: BoxFit.fill,),
                                         ),
                                         SizedBox(height: 16,),
                                         Text("Reach Out, Speak Up",style: AppTextStyles.font_lato.copyWith(fontSize: 14,fontWeight: FontWeight.w300,color: Color(0xffFFFFFF)),),
                                         SizedBox(height: 8,),
-                                        ElevatedButton(
-                                            style: ElevatedButton.styleFrom(
-                                              backgroundColor: Color(0xFF27405A),
-                                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                                              fixedSize: Size(width*0.4, height*0.05),
-                                              elevation: 0,
-                                            ),
-                                            onPressed: (){}, child: Text("Chat Now",style: AppTextStyles.font_poppins.copyWith(fontSize: height*0.017,fontWeight: FontWeight.w700,color: Color(0xFFFBFBFB),letterSpacing: 1),)),
+                                        userProfileFuture.when(
+                                          data: (user) {
+                                            return Consumer(
+                                              builder: (context, watch, child) {
+                                                final result = ref.watch(matchUserProvider(user!.assessmentResponses));
+                                                return ElevatedButton(
+                                                    style: ElevatedButton.styleFrom(
+                                                      backgroundColor: Color(0xFF27405A),
+                                                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                                                      fixedSize: Size(width*0.4, height*0.05),
+                                                      elevation: 0,
+                                                    ),
+                                                    onPressed: () async {
+                                                      print('before');
+                                                      ref.refresh(matchUserProvider(user.assessmentResponses));
+                                                      print('result is: ' + result.toString());
+                                                      result.when(
+                                                          data: (result) {
+                                                            print('got result');
+                                                            if(result.success == false) {
+                                                              Fluttertoast.showToast(msg: result.errorMessage.toString());
+                                                            } else if(result.success == true) {
+                                                              Navigator.push(context, MaterialPageRoute(builder: (context) => MyChats()));
+                                                            }
+
+                                                          },
+                                                        error: (error, stackTrace) => Fluttertoast.showToast(msg: "Error fetching data: $error"),
+                                                        loading: () => Fluttertoast.showToast(msg: "loading..."),
+                                                      );
+                                                    }, child: Text("Chat Now",style: AppTextStyles.font_poppins.copyWith(fontSize: height*0.017,fontWeight: FontWeight.w700,color: Color(0xFFFBFBFB),letterSpacing: 1),));
+                                              }
+                                            );
+                                          },
+                                          error: (error, stackTrace) => Text("Error fetching data: $error"),
+                                          loading: () => Center(child: CircularProgressIndicator()),
+                                        ),
 
                                       ],),
                                       Spacer(),
@@ -109,9 +151,9 @@ class Dashboard extends ConsumerWidget {
                                       Column(
                                         children: [
                                           Container(
-                                            height: height*0.15,
-                                            width: 132 ,
-                                            child: Image.asset("assets/images/f2f4cd11-27b4-4a8c-b9a5-8de20eb358af.png",fit: BoxFit.fill,),
+                                            height: height*0.14,
+                                            width: 80 ,
+                                            child: Image.asset("assets/images/support.png",fit: BoxFit.fill,),
                                           ),
                                           SizedBox(height: 16,),
                                           Text("Emergency Help",style: AppTextStyles.font_lato.copyWith(fontSize: 14,fontWeight: FontWeight.w300,color: Color(0xffFFFFFF)),),
@@ -133,9 +175,10 @@ class Dashboard extends ConsumerWidget {
                       ],
                     ),
                   ),
+
                   Container(
-                    height: height*0.225,
-                    margin: EdgeInsets.symmetric(vertical: 12,horizontal: 16),
+                    height: height*0.185,
+                    margin: EdgeInsets.only(left: 16, right: 16, top: 0, bottom: 12),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(25),
                       color: Color(0x3088AB8E),
@@ -150,11 +193,11 @@ class Dashboard extends ConsumerWidget {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text("1 on 1 Sessions",style: AppTextStyles.font_poppins.copyWith(fontSize: 24,fontWeight: FontWeight.w600,color: Color(0xFF393938)),),
-                                SizedBox(height: 16,),
+                                SizedBox(height: 8,),
                                 Text("Let's open up to the things that",style: AppTextStyles.font_poppins.copyWith(fontSize: 12,fontWeight: FontWeight.w400,color: Color(0xFF393938)),),
                                 SizedBox(height: 8,),
                                 Text("matter the most",style: AppTextStyles.font_poppins.copyWith(fontSize: 12,fontWeight: FontWeight.w400,color: Color(0xFF393938)),),
-                                SizedBox(height: 24,),
+                                SizedBox(height: 12,),
                                 Row(
                                   children: [
                                     GestureDetector(
@@ -170,14 +213,13 @@ class Dashboard extends ConsumerWidget {
                             ),
                           ),
                         ),
-                        SizedBox(width: 16,),
                         Expanded(
                           flex: 3,
                           child: Column(
                             children: [
                               Container(
                                   //height: 168,
-                                  padding: EdgeInsets.only(top: 24,bottom: 16,right: 16),
+                                  padding: EdgeInsets.only(top: 32,bottom: 16,right: 16),
                                   child: Image.asset("assets/images/ca98fe7d-fe0e-46bd-a3d6-7b5c32de8b76.png",fit: BoxFit.fill,)),
                             ],
                           ),

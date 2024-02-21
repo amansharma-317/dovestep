@@ -10,7 +10,11 @@ class UserRepositoryImpl implements UserRepository {
 
   @override
   Future<UserProfile> getUserData() async {
-    // Implement logic to fetch user data using the data source
     return await _dataSource.fetchUserData();
+  }
+
+  @override
+  Future<UserProfile> getOtherUserData(String userId) async {
+    return await _dataSource.fetchUserDataFromId(userId);
   }
 }

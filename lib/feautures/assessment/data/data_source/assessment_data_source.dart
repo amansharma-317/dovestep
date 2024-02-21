@@ -9,8 +9,7 @@ abstract class AssessmentDataSource {
 }
 
 class FirebaseUserDataSource implements AssessmentDataSource {
-  final CollectionReference _usersCollection =
-  FirebaseFirestore.instance.collection('users'); // Adjust the collection name
+  final CollectionReference _usersCollection = FirebaseFirestore.instance.collection('users'); // Adjust the collection name
 
   Future<bool> saveAssessmentResponses(List<int> responses) async {
     try {

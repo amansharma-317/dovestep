@@ -16,3 +16,10 @@ final userDataProvider = FutureProvider<UserProfile?>((ref) async {
   final repository = ref.read(userRepositoryProvider);
   return await repository.getUserData();
 });
+
+final otherUserDataProvider = FutureProvider.family<UserProfile?, String>((ref, userId) async {
+  final repository = ref.read(userRepositoryProvider);
+  return await repository.getOtherUserData(userId);
+});
+
+
