@@ -16,7 +16,7 @@ class _HorizontalScrollButtonsState
   final _buttonNames = [
     "All",
     'Anxiety',
-    'Depression',
+    'College',
     'Stress',
     'Relationships',
     'Trauma',
@@ -43,9 +43,10 @@ class _HorizontalScrollButtonsState
               child: ElevatedButton(
                 onPressed: () {
                   ref.read(selectedCommunitySectionProvider.notifier).state = name;
-                  ref.refresh(communityProvider);
+                  //ref.refresh(communityProvider);
+                  ref.read(communityProvider(name).notifier).fetchPosts();
                 },
-                child: Text(name,style: TextStyle( fontFamily: GoogleFonts.epilogue().fontFamily,fontWeight: FontWeight.w700,fontSize: 12),),
+                child: FittedBox(child: Text(name,style: TextStyle( fontFamily: GoogleFonts.epilogue().fontFamily,fontWeight: FontWeight.w700,fontSize: 12),)),
                 style: ElevatedButton.styleFrom(
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
                   backgroundColor: selectedButtonProvider == name

@@ -40,7 +40,7 @@
                       user.when(
                           data: (user){
                             return GestureDetector(
-                                onTap: () async{
+                                onTap: () async {
                                   if(contentController.text.trim().isNotEmpty && contentController.text.length > 8){
 
                                     ref.read(contentProvider.notifier).state = contentController.text;
@@ -59,12 +59,25 @@
 
                                     final communityRepository = ref.read(communityRepositoryProvider);
                                     await communityRepository.addPost(post);
-                                    ref.refresh(communityProvider);
+                                    //ref.refresh(communityProvider);
+                                    final selectedSection = ref.read(addPostSelectedSectionProvider.notifier).state;
+                                    //await ref.read(communityProvider(selectedSection).notifier).fetchPosts();
+                                    // Set the shouldRefreshProvider to true
+                                    ref.read(shouldRefreshProvider.notifier).state = true;
                                     Navigator.pop(context);
-                                  }
-                                  else{
+                                  } else if (contentController.text.length > 360) {
                                     Fluttertoast.showToast(
-                                      msg: "Post content cannot be empty",
+                                      msg: "Post length cannot exceed 360 characters.",
+                                      toastLength: Toast.LENGTH_SHORT,
+                                      gravity: ToastGravity.BOTTOM,
+                                      timeInSecForIosWeb: 1,
+                                      backgroundColor: Colors.red,
+                                      textColor: Colors.white,
+                                      fontSize: 16.0,
+                                    );
+                                  } else {
+                                    Fluttertoast.showToast(
+                                      msg: "Post length must be atleast 8 characters.",
                                       toastLength: Toast.LENGTH_SHORT,
                                       gravity: ToastGravity.BOTTOM,
                                       timeInSecForIosWeb: 1,
@@ -149,7 +162,7 @@
                         maxLines: null, // Allow unlimited lines for writing content
                         decoration: InputDecoration(
                           contentPadding: EdgeInsets.symmetric(vertical: 12.0, horizontal: 16.0),
-                          floatingLabelBehavior: FloatingLabelBehavior.auto,
+                          floatingLabelBehavior: FloatingLabelBehavior.never,
                           hintText: 'Write down your thoughts...', // Use hintText instead of labelText
                           hintStyle: TextStyle(color: Colors.black.withOpacity(0.5),fontSize: 20), // Adjust hint text color if needed
                           border: InputBorder.none, // Remove the bottom line

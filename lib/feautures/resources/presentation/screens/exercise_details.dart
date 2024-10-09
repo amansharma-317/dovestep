@@ -5,6 +5,7 @@ import 'package:startup/feautures/resources/domain/entities/exercise_entity.dart
 class ExerciseDetails extends StatefulWidget {
   ExerciseDetails({Key? key, required this.exercise}) : super(key: key);
   final ExerciseEntity exercise;
+
   @override
   State<ExerciseDetails> createState() => _ExerciseDetailsState();
 }
@@ -14,7 +15,7 @@ class _ExerciseDetailsState extends State<ExerciseDetails> {
   Widget build(BuildContext context) {
     return SafeArea(
         child: Scaffold(
-          backgroundColor: Color(0xff88AB8E),
+          backgroundColor: Color(0xffF5F5F5),
           body: SingleChildScrollView(
             child: Padding(
               padding: EdgeInsets.symmetric(horizontal: 16.0,vertical: 32),

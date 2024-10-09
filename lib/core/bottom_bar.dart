@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:startup/core/api/check_for_update.dart';
 import 'package:startup/feautures/auth/presentation/screens/dashboard.dart';
 import 'package:startup/feautures/community/presentation/screens/community_screens.dart';
 import 'package:startup/feautures/resources/presentation/screens/resources_screen.dart';
+import 'package:startup/feautures/therapist_directory/presentation/screens/overlay.dart';
 import 'package:startup/feautures/therapist_directory/presentation/screens/therapists_directory_screen.dart';
 import 'package:startup/feautures/users_profile/presentation/screens/profile.dart';
 
@@ -13,12 +15,19 @@ class BottomBar extends StatefulWidget {
 }
 
 class _BottomBarState extends State<BottomBar> {
+
+  @override
+  void initState() {
+    super.initState();
+    checkForUpdate(context);
+  }
+
   int _currentIndex = 2 ;
   List<Widget> body =  [
     CommunityScreen(),
     ResourcesScreen(),
     Dashboard(),
-    TherapistsDirectoryScreen(),
+    UnderDevelopmentOverlay(),
     ProfileScreen(),
   ];
 
@@ -46,7 +55,7 @@ class _BottomBarState extends State<BottomBar> {
             label: 'Resources',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.dashboard_customize_rounded,size: 27,),
+            icon: Icon(Icons.home,size: 27,),
             label: 'Dashboard',
           ),
           BottomNavigationBarItem(

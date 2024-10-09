@@ -14,7 +14,8 @@ class FirebaseAuthRepository implements AuthRepository {
   @override
   Future<bool> verifyOTP(String smsCode) async {
     final result = await dataSource.verifyOTP(smsCode);
-    return result != null; // Return true if authentication is successful
+    //return result != null; // Return true if authentication is successful
+    return result;
   }
 }
 

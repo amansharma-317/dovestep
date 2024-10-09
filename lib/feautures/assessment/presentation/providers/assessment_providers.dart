@@ -27,6 +27,7 @@ final updateFifthQuestionAnswerProvider = Provider<int>((ref) => ref.watch(fifth
 
 
 final hasCompletedAssessmentProvider = FutureProvider<bool>((ref) async {
+  print('entered provider for checking if assessment is filled.');
   final repository = ref.read(assessmentRepositoryProvider);
   final responses = await repository.getAssessmentResponses(); // Replace 'userId' with actual user ID
   return responses != null && responses.length == 5;

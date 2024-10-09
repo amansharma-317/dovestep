@@ -4,7 +4,7 @@ import 'package:startup/core/providers/user_provider.dart';
 import 'package:startup/feautures/community/presentation/providers/community_providers.dart';
 
 class CommentLikeButton extends ConsumerStatefulWidget {
-  CommentLikeButton(this.postId, this.commentId, {Key? key}) : super(key: key);
+  const CommentLikeButton(this.postId, this.commentId, {Key? key}) : super(key: key);
   final String postId;
   final String commentId;
 
@@ -27,8 +27,10 @@ class _CommentLikeButtonState extends ConsumerState<CommentLikeButton> with Tick
   @override
   Widget build(BuildContext context) {
     final userData = ref.watch(userDataProvider);
-    final likeStatus = ref.watch(likeCommentStatusProvider(CommentLikeParams(postId: widget.postId, commentId: widget.commentId)));
-    final likesCountAsync = ref.watch(likeCommentCountProvider(CommentLikeParams(postId: widget.postId, commentId: widget.commentId)));
+    final postId = widget.postId;
+    final commentId = widget.commentId;
+    final likeStatus = ref.watch(likeCommentStatusProvider(CommentIdAndPostIdParams(postId: postId, commentId: commentId)));
+    final likesCountAsync = ref.watch(likeCommentCountProvider(CommentIdAndPostIdParams(postId: postId, commentId: commentId)));
 
 
     return userData.when(data: (user){
@@ -42,8 +44,8 @@ class _CommentLikeButtonState extends ConsumerState<CommentLikeButton> with Tick
               final result = await ref.read(likeCommentProvider.future);
               print('button pressed');
               if (result == true) {
-                ref.refresh(likeCommentCountProvider(CommentLikeParams(postId: widget.postId, commentId: widget.commentId)));
-                ref.refresh(likeCommentStatusProvider(CommentLikeParams(postId: widget.postId, commentId: widget.commentId)));
+                ref.refresh(likeCommentCountProvider(CommentIdAndPostIdParams(postId: postId, commentId: commentId)));
+                ref.refresh(likeCommentStatusProvider(CommentIdAndPostIdParams(postId: postId, commentId: commentId)));
 
                 _controller
                   ..reset()

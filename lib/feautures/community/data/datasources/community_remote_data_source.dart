@@ -6,37 +6,25 @@ import '../../domain/entities/comment_entity.dart';
 class CommunityRemoteDataSource {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  Future<List<PostEntity>> getPostsBySection(String section) async {
-    try {
-      List<PostEntity> posts = [];
-      if(section == "All"){
-        final querySnapshot = await _firestore.collection('posts').orderBy('timestamp', descending: true).get();
-        for (DocumentSnapshot doc in querySnapshot.docs) {
-          // Map data directly to a PostEntity object
-          final dataMap = doc.data() as Map<String, dynamic>;
-          final post = PostEntity.fromMap(dataMap);
-          posts.add(post);
-        }
-      } else {
-        final querySnapshot = await _firestore.collection('posts').where(
-            'section', isEqualTo: section).orderBy('timestamp', descending: true).get();
-        for (DocumentSnapshot doc in querySnapshot.docs) {
-          // Map data directly to a PostEntity object
-          final dataMap = doc.data() as Map<String, dynamic>;
-          final post = PostEntity.fromMap(dataMap);
-          posts.add(post);
-        }
+  Future<List<DocumentSnapshot>> getPostsBySection(String section, DocumentSnapshot? startAfter) async {
+    Query query = _firestore.collection('posts')
+        .where('section', isEqualTo: section)
+        .orderBy('timestamp', descending: true)
+        .limit(6); // Ensure this matches the number you want to load each time
 
-      }
-     // posts.add(PostEntity.fromMap(querySnapshot.docs.first.data() as Map<String, dynamic>));
-
-      return posts;
-    } catch (e) {
-
-      print('Error fetching posts: $e');
-      throw e;
+    if (startAfter != null) {
+      query = query.startAfterDocument(startAfter);
     }
+
+    final querySnapshot = await query.get();
+
+    print('Fetched ${querySnapshot.docs.length} documents.'); // Debug
+
+    return querySnapshot.docs;
   }
+
+
+
 
   Future<DocumentReference> addPost(PostEntity post) async {
     try {
@@ -142,26 +130,36 @@ class CommunityRemoteDataSource {
   }
 
   Future<bool> checkLikeStatusForComment(String postId, String commentId) async {
-    try {
-      final currentUserId = FirebaseAuth.instance.currentUser!.uid;
-      
-      final QuerySnapshot querySnapshot = await FirebaseFirestore.instance
-          .collection('posts')
-          .doc(postId)
-          .collection('comments')
-          .where('commentId', isEqualTo: commentId)
-          .get();
-      
-      if (querySnapshot.docs.isNotEmpty) {
-        final likes = (querySnapshot.docs.first.data() as Map<String, dynamic>)['likes'] ?? [];
-        return likes.contains(currentUserId);
-      } else {
-        return false;
+    final currentUserId = FirebaseAuth.instance.currentUser!.uid;
+    int retries = 3;  // Number of retries
+    int delay = 500;  // Delay in milliseconds
+
+    while (retries > 0) {
+      try {
+        final QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+            .collection('posts')
+            .doc(postId)
+            .collection('comments')
+            .where('commentId', isEqualTo: commentId)
+            .get();
+
+        if (querySnapshot.docs.isNotEmpty) {
+          final likes = (querySnapshot.docs.first.data() as Map<String, dynamic>)['likes'] ?? [];
+          return likes.contains(currentUserId);
+        } else {
+          return false;
+        }
+      } catch (e) {
+        print('Error checking like status for comment: $e');
+        retries--;
+        if (retries > 0) {
+          await Future.delayed(Duration(milliseconds: delay));
+        } else {
+          throw Exception('Error checking like status for comment');
+        }
       }
-    } catch (e) {
-      print('Error checking like status for comment: $e');
-      throw Exception('Error checking like status for comment');
     }
+    return false;
   }
 
   Future<int> getLikeCountForPost(String postId) async{
@@ -203,6 +201,21 @@ class CommunityRemoteDataSource {
     } catch (e) {
       print('Error adding comment: $e');
       throw Exception('Error adding comment');
+    }
+  }
+
+  Future<void> deletePost(String postId) async {
+    try {
+      final postRef = FirebaseFirestore.instance.collection('posts').doc(postId);
+      final postDocumentSnapshot = await postRef.get();
+      if (postDocumentSnapshot.exists) {
+        await postRef.delete();
+        print('Post deleted successfully.');
+      } else {
+        print('Post not found or does not belong to the user.');
+      }
+    } catch (error) {
+      print('Error deleting post: $error');
     }
   }
 }

@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 import '../../domain/entities/comment_entity.dart';
 import '../../domain/entities/post_entity.dart';
 import '../../domain/repositories/community_repository.dart';
@@ -9,16 +11,16 @@ class CommunityRepositoryImpl implements CommunityRepository {
   CommunityRepositoryImpl({required this.remoteDataSource,});
 
   @override
-  Future<List<PostEntity>> getPostsBySection(String section) async {
+  Future<List<DocumentSnapshot>> getPostsBySection(String section, DocumentSnapshot? startAfter) async {
     try {
-      final posts = await remoteDataSource.getPostsBySection(section);
-      return posts;
+      return await remoteDataSource.getPostsBySection(section, startAfter);
     } catch (e) {
       print('Error in repository: $e');
-      // Handle or rethrow the exception as needed
       throw e;
     }
   }
+
+
 
 // Implement other methods
   @override
@@ -84,6 +86,16 @@ class CommunityRepositoryImpl implements CommunityRepository {
   @override
   Future<int> getCommentsCount(String postId) {
     return remoteDataSource.getCommentsCount(postId);
+  }
+
+  @override
+  Future<void> deletePost(String postId) async {
+    try {
+      await remoteDataSource.deletePost(postId);
+    } catch (e) {
+      print('Error in repository: $e');
+      throw Exception('Error liking post');
+    }
   }
 
 }

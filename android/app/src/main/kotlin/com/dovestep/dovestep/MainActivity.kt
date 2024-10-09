@@ -1,4 +1,4 @@
-package com.example.startup
+package com.dovestep.dovestep
 
 import io.flutter.embedding.android.FlutterActivity
 

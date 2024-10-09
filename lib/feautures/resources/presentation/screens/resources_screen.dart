@@ -80,7 +80,7 @@ class ResourcesScreen extends ConsumerWidget {
                       },
                     );
                   },
-                  loading: () => CircularProgressIndicator(),
+                  loading: () => Center(child: CircularProgressIndicator()),
                   error: (error, stackTrace) => Text('Error: $error'),
 
                 ),
@@ -92,7 +92,9 @@ class ResourcesScreen extends ConsumerWidget {
               ref.watch(exerciseCategoriesProvider).when(
                 data: (categories) {
                   return GridView.builder(
+                    scrollDirection: Axis.vertical,
                     shrinkWrap: true,
+                    physics: ScrollPhysics(),
                     itemCount: categories.length,
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 2,
@@ -118,6 +120,7 @@ class ResourcesScreen extends ConsumerWidget {
                 loading: () => CircularProgressIndicator(),
                 error: (error, stackTrace) => Text('Error: $error'),
               ),
+              SizedBox(height: 16,),
             ],
           ),
         ),

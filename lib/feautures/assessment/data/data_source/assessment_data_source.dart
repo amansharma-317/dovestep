@@ -16,7 +16,7 @@ class FirebaseUserDataSource implements AssessmentDataSource {
       User? currentUser = FirebaseAuth.instance.currentUser!;
       if (currentUser != null) {
         final String randomUsername = generateRandomUsername();
-        final String randomAvatarSvgUrl = generateRandomAvatar();
+        final String randomAvatarSvgUrl = generateRandomAvatar(currentUser.uid);
         String uId = currentUser.uid;
         String phone = currentUser.phoneNumber!;
 
@@ -28,10 +28,11 @@ class FirebaseUserDataSource implements AssessmentDataSource {
           qualityOfSleep: responses[4],
         );
 
+        Map<String, dynamic> assessmentMap = assessment.toMap();
         Map<String, dynamic> userData = {
           'username': randomUsername,
           'avatar': randomAvatarSvgUrl,
-          'assessmentResponses': assessment,
+          'assessmentResponses': assessmentMap,
           'createdAt': FieldValue.serverTimestamp(),
           'lastLogin': FieldValue.serverTimestamp(),
           'totalChats': 0,
@@ -53,6 +54,7 @@ class FirebaseUserDataSource implements AssessmentDataSource {
 
   Future<List<int>?> getAssessmentResponses() async {
     try {
+      print('started running getassessmentresponses');
       User? currentUser = FirebaseAuth.instance.currentUser;
       if (currentUser != null) {
         String uId = currentUser.uid;
@@ -65,6 +67,7 @@ class FirebaseUserDataSource implements AssessmentDataSource {
             // Convert map values to a list of integers
             List<int> responses = assessmentMap.values.map((value) => value as int).toList();
             print('hi');
+            print('assessment results exist for the current user');
             return responses;
           } else {
             print('Assessment data not found for the current user.');

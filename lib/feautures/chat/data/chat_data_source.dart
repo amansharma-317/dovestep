@@ -18,6 +18,7 @@ class ChatDataSource {
         'timestamp': message.timestamp,
         'isRead': false, // Assuming this field is part of your message model
       });
+      print('message sent');
 
     // Use the document ID as a field in the document
       await newDocRef.update({'id': newDocRef.id});
@@ -108,7 +109,12 @@ class ChatDataSource {
   Future<List<Chat>> getChats() async {
     try {
       final currentUserId = FirebaseAuth.instance.currentUser!.uid;
-      final querySnapshot = await _firestore.collection('chatrooms').get();
+
+      // Query chatrooms where the participants array contains the current user's ID
+      final querySnapshot = await _firestore
+          .collection('chatrooms')
+          .where('participants', arrayContains: currentUserId)
+          .get();
 
       final List<Chat> chats = [];
 
@@ -126,7 +132,6 @@ class ChatDataSource {
         Message? lastMessage;
         if (lastMessageQuerySnapshot.docs.isNotEmpty) {
           final lastMessageData = lastMessageQuerySnapshot.docs.first.data();
-          print('aman');
           lastMessage = Message.fromMap(lastMessageData);
         }
 
@@ -144,6 +149,7 @@ class ChatDataSource {
       throw e;
     }
   }
+
 
 
 

@@ -9,7 +9,7 @@ final firebaseFirestoreProvider = Provider((ref) => FirebaseFirestore.instance);
 
 final firestorePostsRemoteDataSourceProvider = Provider((ref) => FirestorePostsRemoteDataSource(ref.watch(firebaseFirestoreProvider)));
 final postsRepositoryProvider = Provider((ref) => PostsRepositoryImpl(ref.watch(firestorePostsRemoteDataSourceProvider)));
-final postsForUserProvider = FutureProvider.family<List<PostEntity>, String>((ref, userId) async {
+final postsForUserProvider = FutureProvider.autoDispose.family<List<PostEntity>, String>((ref, userId) async {
   final postsRepository = ref.read(postsRepositoryProvider);
   return postsRepository.getPostsByUserId(userId);
 });

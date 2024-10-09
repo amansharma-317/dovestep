@@ -7,6 +7,44 @@
   "client": [
     {
       "client_info": {
+        "mobilesdk_app_id": "1:439140816005:android:5aae40f0947f15dccb45ec",
+        "android_client_info": {
+          "package_name": "com.dovestep.dovestep"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCM-fojCVDKQ0WqHFPQbDROM0yvGq8K0UA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:439140816005:android:7729cdeb40b79fe9cb45ec",
+        "android_client_info": {
+          "package_name": "com.dovestep.in.dovestep"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCM-fojCVDKQ0WqHFPQbDROM0yvGq8K0UA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
         "mobilesdk_app_id": "1:439140816005:android:b3e41324da7da4b4cb45ec",
         "android_client_info": {
           "package_name": "com.example.startup"

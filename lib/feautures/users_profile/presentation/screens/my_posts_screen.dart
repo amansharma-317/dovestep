@@ -37,109 +37,132 @@ class MyPostsScreen extends ConsumerWidget {
               loading: () => CircularProgressIndicator(),
               error: (error, stackTrace) => Text('Error: $error'),
               data: (posts) {
-                return Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: ListView.builder(
-                    itemCount: posts.length,
-                    itemBuilder: (context, index) {
-                      final post = posts[index];
-                      final String firestoreTimestamp = post.timestamp!;
-                      String formattedDateTime = TimestampConverter.formatFirestoreTimestamp(firestoreTimestamp);
-                      final commentsCount = ref.watch(commentCountProvider(post.postId!));
-                      return Container(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Container(
-                              width: 104,
-                              height: 40,
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(10.0),
-                                border: Border.all(
-                                  color: Color(0xFF616060),
-                                  width: 2.0,
-                                ),
-                              ),
-                              child: Center(
-                                child: Text(
-                                  post.section!,
-                                  style: TextStyle(
-                                    fontFamily: GoogleFonts.epilogue().fontFamily,
-                                    fontWeight: FontWeight.w700,
-                                    fontSize: 12,
+                if(posts.length > 0) {
+                  return Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: ListView.builder(
+                      itemCount: posts.length,
+                      itemBuilder: (context, index) {
+                        final post = posts[index];
+                        final String firestoreTimestamp = post.timestamp!;
+                        String formattedDateTime = TimestampConverter.formatFirestoreTimestamp(firestoreTimestamp);
+                        final commentsCount = ref.watch(commentCountProvider(post.postId!));
+                        return Container(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Container(
+                                width: 104,
+                                height: 40,
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(10.0),
+                                  border: Border.all(
+                                    color: Color(0xFF616060),
+                                    width: 2.0,
                                   ),
                                 ),
-                              ),
-                            ),
-                            SizedBox(height: 8),
-                            Row(
-                              children: [
-                                CircleAvatar(
-                                  backgroundColor: Color(0xFFEEEEEE),
-                                  child: SvgPicture.string(
-                                    post.profilePicUrl!,
-                                    semanticsLabel: 'Profile Picture',
-                                    placeholderBuilder: (BuildContext context) => Container(
-                                      padding: const EdgeInsets.all(30.0),
-                                      child: const CircularProgressIndicator(),
+                                child: Center(
+                                  child: Text(
+                                    post.section!,
+                                    style: TextStyle(
+                                      fontFamily: GoogleFonts.epilogue().fontFamily,
+                                      fontWeight: FontWeight.w700,
+                                      fontSize: 12,
                                     ),
                                   ),
                                 ),
-                                SizedBox(width: 8,),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(post.username!, style: AppTextStyles.font_lato.copyWith(fontSize: 16, fontWeight: FontWeight.w800, color: Color(0xFF282827))),
-                                    Text(formattedDateTime, style: TextStyle(fontWeight: FontWeight.w300, fontSize: 12, color: Color(0xFF282827), fontFamily: GoogleFonts.lato().fontFamily)),
-                                  ],
-                                ),
-                              ],
-                            ),
-                            SizedBox(height: 8,),
-                            Text(post.content!, style: AppTextStyles.font_lato.copyWith(fontSize: 14, color: Color(0xFF000000), height: 1)),
-                            SizedBox(height: 8,),
-                            Row(
-                              children: [
-                                Container(
-                                    child: HeartButton(post.postId!)),
-                                SizedBox(width: 16,),
-                                Row(
-                                  children: [
-                                    Container(
-                                      height: 36,
-                                      width: 36,
-                                      child: GestureDetector(
-                                        child: Image.asset("assets/images/7b9b8c59-3b1e-4615-8f4c-4d3a07609f97.png"),
-                                        onTap: () {
-                                          ref.read(postIdProvider.notifier).state = post.postId!;
-                                          Navigator.push(
-                                            context,
-                                            MaterialPageRoute(builder: (context) => CommentScreen(post)),
-                                          );
-                                        },
+                              ),
+                              SizedBox(height: 8),
+                              Row(
+                                children: [
+                                  CircleAvatar(
+                                    backgroundColor: Color(0xFFEEEEEE),
+                                    child: SvgPicture.string(
+                                      post.profilePicUrl!,
+                                      semanticsLabel: 'Profile Picture',
+                                      placeholderBuilder: (BuildContext context) => Container(
+                                        padding: const EdgeInsets.all(30.0),
+                                        child: const CircularProgressIndicator(),
                                       ),
                                     ),
-                                    SizedBox(width: 4,),
-                                    Text(
-                                        commentsCount.when(
-                                          data: (count) => count.toString(),
-                                          loading: () => 'Loading...',
-                                          error: (error, stackTrace) => 'Error: $error',
-                                        )
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                            SizedBox(height: 24,),
-
-                          ],
-                        ),
-                      );
-                    },
-                  ),
-                );
+                                  ),
+                                  SizedBox(width: 8,),
+                                  Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(post.username!, style: AppTextStyles.font_lato.copyWith(fontSize: 16, fontWeight: FontWeight.w800, color: Color(0xFF282827))),
+                                      Text(formattedDateTime, style: TextStyle(fontWeight: FontWeight.w300, fontSize: 12, color: Color(0xFF282827), fontFamily: GoogleFonts.lato().fontFamily)),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                              SizedBox(height: 8,),
+                              Text(post.content!, style: AppTextStyles.font_lato.copyWith(fontSize: 14, color: Color(0xFF000000), height: 1)),
+                              SizedBox(height: 8,),
+                              Row(
+                                children: [
+                                  Container(
+                                      child: HeartButton(post.postId!)),
+                                  SizedBox(width: 16,),
+                                  Row(
+                                    children: [
+                                      Container(
+                                        height: 36,
+                                        width: 36,
+                                        child: GestureDetector(
+                                          child: Image.asset("assets/images/7b9b8c59-3b1e-4615-8f4c-4d3a07609f97.png"),
+                                          onTap: () {
+                                            ref.read(postIdProvider.notifier).state = post.postId!;
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(builder: (context) => CommentScreen(post)),
+                                            );
+                                          },
+                                        ),
+                                      ),
+                                      SizedBox(width: 4,),
+                                      Text(
+                                          commentsCount.when(
+                                            data: (count) => count.toString(),
+                                            loading: () => 'Loading...',
+                                            error: (error, stackTrace) => 'Error: $error',
+                                          )
+                                      ),
+                                      SizedBox(width: 16,),
+                                      GestureDetector(
+                                        onTap: () async {
+                                          await ref.read(deletePostProvider(post.postId!));
+                                          ref.refresh(postsForUserProvider(userId));
+                                        },
+                                        child: Icon(
+                                          Icons.delete_outline_rounded,
+                                          color: Colors.red,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                              SizedBox(height: 24,),
+                            ],
+                          ),
+                        );
+                      },
+                    ),
+                  );
+                } else {
+                  return Container(
+                    margin: EdgeInsets.symmetric(horizontal: 32),
+                    child: Center(
+                      child: Text(
+                        'You have not made any posts yet.',
+                        textAlign: TextAlign.center,
+                        style: AppTextStyles.font_poppins.copyWith(height: 1.5),
+                      ),
+                    ),
+                  );
+                }
               },
             );
           },

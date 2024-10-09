@@ -15,6 +15,17 @@ class MatchingDataSource {
       User? currentUser = FirebaseAuth.instance.currentUser;
 
       if (currentUser != null) {
+        //check if already in an active chatroom
+          // Check if the user is already in an active chatroom
+          final existingChatrooms = await _firestore
+              .collection('chatrooms')
+              .where('participants', arrayContains: currentUser.uid)
+              .get();
+
+          if (existingChatrooms.docs.isNotEmpty) {
+            return MatchUserResult(success: false, errorMessage: 'You are already in an active chatroom.');
+          }
+
         // Add the user to the chat queue if not already present
         final isUserAddedToQueue = await addUserToChatQueue();
 
@@ -43,9 +54,11 @@ class MatchingDataSource {
 
             // Remove users from the chat queue
             QuerySnapshot currentUserDocs = await _firestore
-                .collection('chatQueue')
+                .collection('ChatQueue')
                 .where('userId', isEqualTo: currentUser.uid)
                 .get();
+
+            print(currentUserDocs.docs.length);
 
             for (DocumentSnapshot doc in currentUserDocs.docs) {
               await doc.reference.delete();
@@ -56,10 +69,11 @@ class MatchingDataSource {
                 .where('userId', isEqualTo: selectedMatchUserId)
                 .get();
 
+            print(selectedMatchUserDocs.docs.length);
+
             for (DocumentSnapshot doc in selectedMatchUserDocs.docs) {
               await doc.reference.delete();
             }
-
 
             return MatchUserResult(success: true);
           }

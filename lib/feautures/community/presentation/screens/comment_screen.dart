@@ -19,10 +19,10 @@ class CommentScreen extends ConsumerStatefulWidget {
   final PostEntity post;
 
   @override
-  ConsumerState<CommentScreen> createState() => _CommunityScreenState();
+  ConsumerState<CommentScreen> createState() => _CommentScreenState();
 }
 
-class _CommunityScreenState extends ConsumerState<CommentScreen> {
+class _CommentScreenState extends ConsumerState<CommentScreen> {
   final contentController = TextEditingController();
 
   @override
@@ -115,11 +115,6 @@ class _CommunityScreenState extends ConsumerState<CommentScreen> {
                         child: GestureDetector(
                           child: Image.asset("assets/images/7b9b8c59-3b1e-4615-8f4c-4d3a07609f97.png"),
                           onTap: () {
-                            ref.read(postIdProvider.notifier).state = widget.post.postId!;
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (context) => CommentScreen(widget.post)),
-                            );
                           },
                         ),
                       ),
@@ -137,63 +132,60 @@ class _CommunityScreenState extends ConsumerState<CommentScreen> {
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
                         stream.when(
-                            data: (comments) {
-                              return Expanded(
-                                flex: 1,
-                                child: ListView.builder(
-                                  itemCount: comments.length,
-                                  itemBuilder: (context, index) {
-                                    final comment = comments[index];
-                                    return Padding(
-                                      padding: const EdgeInsets.only(left: 24.0, right: 16, bottom: 16),
-                                      child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          Row(
-                                            children: [
-                                              CircleAvatar(
-                                                backgroundColor: Color(0xFFEEEEEE),
-                                                child: SvgPicture.string(
-                                                  comment.userProfileImage!,
-                                                  semanticsLabel: 'Profile Picture',
-                                                  placeholderBuilder: (BuildContext context) => Container(
-                                                    padding: const EdgeInsets.all(30.0),
-                                                    child: const CircularProgressIndicator(),
-                                                  ),
+                          data: (comments) {
+                            return Expanded(
+                              flex: 1,
+                              child: ListView.builder(
+                                itemCount: comments.length,
+                                itemBuilder: (context, index) {
+                                  final comment = comments[index];
+                                  return Padding(
+                                    padding: const EdgeInsets.only(left: 24.0, right: 16, bottom: 16),
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Row(
+                                          children: [
+                                            CircleAvatar(
+                                              backgroundColor: Color(0xFFEEEEEE),
+                                              child: SvgPicture.string(
+                                                comment.userProfileImage!,
+                                                semanticsLabel: 'Profile Picture',
+                                                placeholderBuilder: (BuildContext context) => Container(
+                                                  padding: const EdgeInsets.all(30.0),
+                                                  child: const CircularProgressIndicator(),
                                                 ),
                                               ),
-                                              SizedBox(width: 8),
-                                              Column(
-                                                crossAxisAlignment: CrossAxisAlignment.start,
-                                                children: [
-                                                  Text(
-                                                    comment.username,
-                                                    style: AppTextStyles.font_lato.copyWith(fontSize: 16, fontWeight: FontWeight.w800, color: Color(0xFF282827)),
-                                                  ),
-                                                  Text(
-                                                    formattedDate,
-                                                    style: TextStyle(fontWeight: FontWeight.w300, fontSize: 12, color: Color(0xFF282827), fontFamily: GoogleFonts.lato().fontFamily),
-                                                  ),
-                                                ],
-                                              ),
-                                            ],
-                                          ),
-                                          SizedBox(height: 8),
-                                          Text(comment.commentContent),
-                                          SizedBox(height: 8),
-                                          Text(widget.post.postId!),
-                                          Text(comment.commentId),
-                                          SizedBox(height: 8),
-                                          CommentLikeButton(widget.post.postId!, comment.commentId),
-                                        ],
-                                      ),
-                                    );
-                                  },
-                                ),
-                              );
-                            },
-                            error: (error, stackTrace) => Text(error.toString()),
-                            loading: () => CircularProgressIndicator(),
+                                            ),
+                                            SizedBox(width: 8),
+                                            Column(
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  comment.username,
+                                                  style: AppTextStyles.font_lato.copyWith(fontSize: 16, fontWeight: FontWeight.w800, color: Color(0xFF282827)),
+                                                ),
+                                                Text(
+                                                  formattedDate,
+                                                  style: TextStyle(fontWeight: FontWeight.w300, fontSize: 12, color: Color(0xFF282827), fontFamily: GoogleFonts.lato().fontFamily),
+                                                ),
+                                              ],
+                                            ),
+                                          ],
+                                        ),
+                                        SizedBox(height: 8),
+                                        Text(comment.commentContent),
+                                        SizedBox(height: 8),
+                                        CommentLikeButton(widget.post.postId!, comment.commentId),
+                                      ],
+                                    ),
+                                  );
+                                },
+                              ),
+                            );
+                          },
+                          error: (error, stackTrace) => Text(error.toString()),
+                          loading: () => CircularProgressIndicator(),
                         ),
                         TextFormField(
                           controller: contentController,
@@ -213,6 +205,7 @@ class _CommunityScreenState extends ConsumerState<CommentScreen> {
                                 );
                                 final communityRepository = ref.read(communityRepositoryProvider);
                                 await communityRepository.addComment(widget.post.postId!, comment);
+                                contentController.clear();
                                 print('IconButton pressed');
                               },
                               icon: Icon(Icons.send),
@@ -233,3 +226,4 @@ class _CommunityScreenState extends ConsumerState<CommentScreen> {
     );
   }
 }
+

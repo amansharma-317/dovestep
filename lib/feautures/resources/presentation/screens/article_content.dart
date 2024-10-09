@@ -116,6 +116,7 @@ class _ArticleContentState extends State<ArticleContent> {
                 SizedBox(height: 16),
                 Text(
                   widget.article.content,
+                  textAlign: TextAlign.justify,
                   style: GoogleFonts.lato(
                     textStyle: TextStyle(
                       color: Color(0xff3A4454),

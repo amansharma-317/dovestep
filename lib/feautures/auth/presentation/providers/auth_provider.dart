@@ -29,16 +29,13 @@ class AuthStateNotifier extends StateNotifier<bool> {
   }
 
   Future<void> verifyPhoneNumber(String phoneNumber) async {
-    // Access the data source from the repository and trigger phone number verification
      await _authRepository.sendOTP(phoneNumber);
   }
 
-  Future<void> verifyOTP(String phoneNumber, String otp) async {
-    // Access the data source from the repository and verify the OTP
-    await _authRepository.verifyOTP(otp);
-
-    // Set authenticated state if OTP verification is successful
+  Future<bool> verifyOTP(String? phoneNumber, String? otp) async {
+    final result = await _authRepository.verifyOTP(otp!);
     setAuthenticated(true);
+    return result;
   }
 }
 
@@ -55,3 +52,5 @@ final authRepositoryProvider = Provider<AuthRepository>((ref) {
   final dataSource = FirebasePhoneDataSource(); // Instantiate your data source here
   return FirebaseAuthRepository(dataSource);
 });
+
+

@@ -1,11 +1,15 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:startup/config/utils/const.dart';
+import 'package:startup/config/utils/update_avatar.dart';
 import 'package:startup/core/providers/user_provider.dart';
 import 'package:startup/feautures/chat/presentation/screens/my_chats.dart';
+import 'package:startup/feautures/therapist_directory/presentation/screens/my_bookings_screen.dart';
 import 'package:startup/feautures/users_profile/presentation/screens/my_posts_screen.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ProfileScreen extends ConsumerWidget {
   const ProfileScreen({Key? key}) : super(key: key);
@@ -44,23 +48,26 @@ class ProfileScreen extends ConsumerWidget {
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Container(
-                          padding: EdgeInsets.only(bottom: 8),
+                          padding: EdgeInsets.only(bottom: 0),
                           width: width*0.2,
                           //color: Colors.red,
-                          child: SvgPicture.string(
-                            user.avatar,
-                            semanticsLabel: 'Profile Picture',
-                            alignment: Alignment.center,
-                            //fit: BoxFit.fitHeight,
-                            placeholderBuilder: (BuildContext context) => Container(
-                              padding: const EdgeInsets.all(30.0),
-                              child: const CircularProgressIndicator(),
+                          child: CircleAvatar(
+                            child: SvgPicture.string(
+                              user.avatar,
+                              semanticsLabel: 'Profile Picture',
+                              alignment: Alignment.center,
+                              //fit: BoxFit.fitHeight,
+                              placeholderBuilder: (BuildContext context) => Container(
+                                padding: const EdgeInsets.all(30.0),
+                                child: const CircularProgressIndicator(),
+                              ),
                             ),
                           ),
                         ),
                         SizedBox(width: 8,),
                         Column(
                           mainAxisAlignment: MainAxisAlignment.center,
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             FittedBox(
                               fit: BoxFit.fill,
@@ -84,13 +91,24 @@ class ProfileScreen extends ConsumerWidget {
                 ),
                 SizedBox(height: 32,),
                 GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => MyBookings()),
+                    );
+                  },
                   child: Row(
                     children: [
                       Icon(Icons.my_library_books_sharp,color: Color(0xFF4E8C5F)),
                       SizedBox(width: 8,),
                       Text("My Bookings",style: AppTextStyles.font_lato.copyWith(fontSize: 18)),
                       Spacer(),
-                      IconButton(onPressed: (){}, icon: Icon(Icons.arrow_forward_ios,)),
+                      IconButton(onPressed: (){
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => MyBookings()),
+                        );
+                      }, icon: Icon(Icons.arrow_forward_ios,)),
                     ],
                   ),
                 ),
@@ -108,12 +126,23 @@ class ProfileScreen extends ConsumerWidget {
                       SizedBox(width: 8,),
                       Text("My Posts",style: AppTextStyles.font_lato.copyWith(fontSize: 18)),
                       Spacer(),
-                      IconButton(onPressed: (){}, icon: Icon(Icons.arrow_forward_ios)),
+                      IconButton(onPressed: (){
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (context) => MyPostsScreen(userId: userId)),
+                        );
+                      }, icon: Icon(Icons.arrow_forward_ios)),
                     ],
                   ),
                 ),
                 SizedBox(height: 16,),
                 GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => MyChats()),
+                    );
+                  },
                   child: Row(
                     children: [
                       Icon(Icons.chat_outlined,color: Color(0xFF4E8C5F)),
@@ -145,13 +174,39 @@ class ProfileScreen extends ConsumerWidget {
                 Text("Account",style: AppTextStyles.font_poppins.copyWith(fontSize: 20),),
                 SizedBox(height: 16,),
                 GestureDetector(
+                  onTap: () async {
+                    final Uri params = Uri(
+                      scheme: 'mailto',
+                      path: 'brainyboy777@gmail.com',
+                      query: 'subject=Feedback for Dovestep Mobile App&body=Write your feedback here...', //add subject and body here
+                    );
+                    var url = params.toString();
+                    if (await canLaunchUrl(params)) {
+                      await launchUrl(params);
+                    } else {
+                      throw 'Could not launch $url';
+                    }
+                  },
                   child: Row(
                     children: [
                       Icon(Icons.help_outline_outlined,color: Color(0xFF4E8C5F)),
                       SizedBox(width: 8,),
                       Text("Help",style: AppTextStyles.font_lato.copyWith(fontSize: 18)),
                       Spacer(),
-                      IconButton(onPressed: (){}, icon: Icon(Icons.arrow_forward_ios,)),
+                      IconButton(
+                          onPressed: () async {
+                            final Uri params = Uri(
+                              scheme: 'mailto',
+                              path: 'brainyboy777@gmail.com',
+                              query: 'subject=Feedback for Dovestep Mobile App&body=Write your feedback here...', //add subject and body here
+                            );
+                            var url = params.toString();
+                            if (await canLaunchUrl(params)) {
+                            await launchUrl(params);
+                            } else {
+                            throw 'Could not launch $url';
+                            }
+                          }, icon: Icon(Icons.arrow_forward_ios,)),
                     ],
                   ),
                 ),
@@ -165,7 +220,12 @@ class ProfileScreen extends ConsumerWidget {
                       SizedBox(width: 8,),
                       Text("Privacy Policy",style: AppTextStyles.font_lato.copyWith(fontSize: 18)),
                       Spacer(),
-                      IconButton(onPressed: (){}, icon: Icon(Icons.arrow_forward_ios)),
+                      IconButton(onPressed: () async {
+                        final Uri url = Uri.parse('https://www.dovestep.in/PrivacyPolicy'); // Replace with your website URL
+                        if (!await launchUrl(url)) {
+                          throw 'Could not launch $url';
+                        }
+                      }, icon: Icon(Icons.arrow_forward_ios)),
                     ],
                   ),
                 ),
@@ -177,7 +237,25 @@ class ProfileScreen extends ConsumerWidget {
                       SizedBox(width: 8,),
                       Text("About Us",style: AppTextStyles.font_lato.copyWith(fontSize: 18)),
                       Spacer(),
-                      IconButton(onPressed: (){}, icon: Icon(Icons.arrow_forward_ios,)),
+                      IconButton(onPressed: () async {
+                        final Uri url = Uri.parse('https://www.dovestep.in/About'); // Replace with your website URL
+                        if (!await launchUrl(url)) {
+                          throw 'Could not launch $url';
+                        }
+                      }, icon: Icon(Icons.arrow_forward_ios,)),
+                    ],
+                  ),
+                ),
+                SizedBox(height: 16,),
+                GestureDetector(
+                  onTap: () {
+                    FirebaseAuth.instance.signOut();
+                  },
+                  child: Row(
+                    children: [
+                      Icon(Icons.chat_outlined,color: Colors.red),
+                      SizedBox(width: 8,),
+                      Text("Log Out",style: AppTextStyles.font_lato.copyWith(fontSize: 18, color: Colors.red)),
                     ],
                   ),
                 ),

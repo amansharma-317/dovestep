@@ -6,6 +6,6 @@ String generateRandomUsername() {
   return randomWords.asPascalCase; // Combine two random words
 }
 
-String generateRandomAvatar() {
-  return RandomAvatarString('saytoonz', trBackground: true);
+String generateRandomAvatar(String userId) {
+  return RandomAvatarString(userId, trBackground: true);
 }

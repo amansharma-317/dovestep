@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:loading_indicator/loading_indicator.dart';
-import 'package:startup/feautures/assessment/domain/repository/assessment_repository.dart';
+import 'package:startup/core/bottom_bar.dart';
 import 'package:startup/feautures/assessment/presentation/providers/assessment_providers.dart';
 import 'package:startup/feautures/auth/presentation/screens/dashboard.dart';
 
@@ -42,12 +42,42 @@ class Question5 extends ConsumerWidget {
               Center(
                 child: Container(
                   child: ElevatedButton(
-                    onPressed: (){
+                    onPressed: () async {
                       ref.read(fifthQuestionAnswerProvider.notifier).state = 1;
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => Question5())); // Direct push to Question3
+                      LoadingIndicator(
+                          indicatorType: Indicator.orbit, /// Required, The loading type of the widget
+                          colors: const [Colors.white],       /// Optional, The color collections
+                          strokeWidth: 2,                     /// Optional, The stroke of the line, only applicable to widget which contains line
+                          backgroundColor: Colors.black,      /// Optional, Background of the widget
+                          pathBackgroundColor: Colors.black   /// Optional, the stroke backgroundColor
+                      );
+                      try {
+                        final repository = ref.read(assessmentRepositoryProvider);
+                        final responses = [
+                          ref.read(firstQuestionAnswerProvider.notifier).state,
+                          ref.read(secondQuestionAnswerProvider.notifier).state,
+                          ref.read(thirdQuestionAnswerProvider.notifier).state,
+                          ref.read(fourthQuestionAnswerProvider.notifier).state,
+                          ref.read(fifthQuestionAnswerProvider.notifier).state,
+                        ];
+
+                        final isSuccess = await repository.saveAssessmentResponses(responses);
+
+                        // Dismiss the loading indicator
+
+                        if (isSuccess) {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => BottomBar()));
+                        } else {
+                          Fluttertoast.showToast(msg: 'Failure to save your data!');
+                        }
+                      } catch (e) {
+                        // Dismiss the loading indicator if an error occurs
+                        print('error : ' + e.toString());
+                        Fluttertoast.showToast(msg: 'Failure to save your data!');
+                      }
                     },
                     child: Text('Very low', style: GoogleFonts.lato(color: Colors.white, fontSize: 18),),
                     style: ElevatedButton.styleFrom(
@@ -66,12 +96,42 @@ class Question5 extends ConsumerWidget {
                 child: Container(
 
                   child: ElevatedButton(
-                    onPressed: (){
+                    onPressed: () async {
                       ref.read(fifthQuestionAnswerProvider.notifier).state = 2;
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => Question5())); // Direct
+                      LoadingIndicator(
+                          indicatorType: Indicator.orbit, /// Required, The loading type of the widget
+                          colors: const [Colors.white],       /// Optional, The color collections
+                          strokeWidth: 2,                     /// Optional, The stroke of the line, only applicable to widget which contains line
+                          backgroundColor: Colors.black,      /// Optional, Background of the widget
+                          pathBackgroundColor: Colors.black   /// Optional, the stroke backgroundColor
+                      );
+                      try {
+                        final repository = ref.read(assessmentRepositoryProvider);
+                        final responses = [
+                          ref.read(firstQuestionAnswerProvider.notifier).state,
+                          ref.read(secondQuestionAnswerProvider.notifier).state,
+                          ref.read(thirdQuestionAnswerProvider.notifier).state,
+                          ref.read(fourthQuestionAnswerProvider.notifier).state,
+                          ref.read(fifthQuestionAnswerProvider.notifier).state,
+                        ];
+
+                        final isSuccess = await repository.saveAssessmentResponses(responses);
+
+                        // Dismiss the loading indicator
+
+                        if (isSuccess) {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => BottomBar()));
+                        } else {
+                          Fluttertoast.showToast(msg: 'Failure to save your data!');
+                        }
+                      } catch (e) {
+                        // Dismiss the loading indicator if an error occurs
+                        print('error : ' + e.toString());
+                        Fluttertoast.showToast(msg: 'Failure to save your data!');
+                      }
                     },
                     child: Text('Low', style: GoogleFonts.lato(color: Colors.white, fontSize: 18),),
                     style: ElevatedButton.styleFrom(
@@ -89,12 +149,42 @@ class Question5 extends ConsumerWidget {
               Center(
                 child: Container(
                   child: ElevatedButton(
-                    onPressed: (){
+                    onPressed: () async {
                       ref.read(fifthQuestionAnswerProvider.notifier).state = 3;
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => Question5())); // Direct
+                      LoadingIndicator(
+                          indicatorType: Indicator.orbit, /// Required, The loading type of the widget
+                          colors: const [Colors.white],       /// Optional, The color collections
+                          strokeWidth: 2,                     /// Optional, The stroke of the line, only applicable to widget which contains line
+                          backgroundColor: Colors.black,      /// Optional, Background of the widget
+                          pathBackgroundColor: Colors.black   /// Optional, the stroke backgroundColor
+                      );
+                      try {
+                        final repository = ref.read(assessmentRepositoryProvider);
+                        final responses = [
+                          ref.read(firstQuestionAnswerProvider.notifier).state,
+                          ref.read(secondQuestionAnswerProvider.notifier).state,
+                          ref.read(thirdQuestionAnswerProvider.notifier).state,
+                          ref.read(fourthQuestionAnswerProvider.notifier).state,
+                          ref.read(fifthQuestionAnswerProvider.notifier).state,
+                        ];
+
+                        final isSuccess = await repository.saveAssessmentResponses(responses);
+
+                        // Dismiss the loading indicator
+
+                        if (isSuccess) {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => BottomBar()));
+                        } else {
+                          Fluttertoast.showToast(msg: 'Failure to save your data!');
+                        }
+                      } catch (e) {
+                        // Dismiss the loading indicator if an error occurs
+                        print('error : ' + e.toString());
+                        Fluttertoast.showToast(msg: 'Failure to save your data!');
+                      }
                     },
                     child: Text('Neutral', style: GoogleFonts.lato(color: Colors.white, fontSize: 18),),
                     style: ElevatedButton.styleFrom(
@@ -139,7 +229,7 @@ class Question5 extends ConsumerWidget {
                           Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => Dashboard()));
+                                  builder: (context) => BottomBar()));
                         } else {
                           Fluttertoast.showToast(msg: 'Failure to save your data!');
                         }
@@ -165,12 +255,42 @@ class Question5 extends ConsumerWidget {
               Center(
                 child: Container(
                   child: ElevatedButton(
-                    onPressed: (){
+                    onPressed: () async {
                       ref.read(fifthQuestionAnswerProvider.notifier).state = 5;
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => Question5())); // Direct
+                      LoadingIndicator(
+                          indicatorType: Indicator.orbit, /// Required, The loading type of the widget
+                          colors: const [Colors.white],       /// Optional, The color collections
+                          strokeWidth: 2,                     /// Optional, The stroke of the line, only applicable to widget which contains line
+                          backgroundColor: Colors.black,      /// Optional, Background of the widget
+                          pathBackgroundColor: Colors.black   /// Optional, the stroke backgroundColor
+                      );
+                      try {
+                        final repository = ref.read(assessmentRepositoryProvider);
+                        final responses = [
+                          ref.read(firstQuestionAnswerProvider.notifier).state,
+                          ref.read(secondQuestionAnswerProvider.notifier).state,
+                          ref.read(thirdQuestionAnswerProvider.notifier).state,
+                          ref.read(fourthQuestionAnswerProvider.notifier).state,
+                          ref.read(fifthQuestionAnswerProvider.notifier).state,
+                        ];
+
+                        final isSuccess = await repository.saveAssessmentResponses(responses);
+
+                        // Dismiss the loading indicator
+
+                        if (isSuccess) {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => BottomBar()));
+                        } else {
+                          Fluttertoast.showToast(msg: 'Failure to save your data!');
+                        }
+                      } catch (e) {
+                        // Dismiss the loading indicator if an error occurs
+                        print('error : ' + e.toString());
+                        Fluttertoast.showToast(msg: 'Failure to save your data!');
+                      }
                     },
                     child: Text('Very high', style: GoogleFonts.lato(color: Colors.white, fontSize: 18),),
                     style: ElevatedButton.styleFrom(

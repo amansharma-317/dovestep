@@ -1,4 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:startup/core/api/profanity_service.dart';
 import 'package:startup/feautures/chat/data/chat_data_source.dart';
 import 'package:startup/feautures/chat/data/chat_repository_impl.dart';
 import 'package:startup/feautures/chat/domain/chat_repository.dart';
@@ -18,11 +20,16 @@ final chatRepositoryProvider = Provider<ChatRepository>((ref) {
 
 final sendMessageProvider = FutureProvider.autoDispose.family<void, SendMessageParams>((ref, params) async {
   final repository = ref.read(chatRepositoryProvider);
+  final profanityService = ref.read(profanityServiceProvider);
 
-  if (params.message.text.isNotEmpty) {
-    await repository.sendMessage(params.message, params.chatId); // Assuming sendMessage method takes chatId and message
+  if(profanityService.hasProfanity(params.message.text)) {
+    Fluttertoast.showToast(msg: 'Message contained profanity, could not be sent.');
   } else {
-    print('no text in the message to send');
+    if (params.message.text.isNotEmpty) {
+      await repository.sendMessage(params.message, params.chatId); // Assuming sendMessage method takes chatId and message
+    } else {
+      print('no text in the message to send');
+    }
   }
 });
 
@@ -42,7 +49,7 @@ final messagesUsingPaginationProvider = StreamProvider.family<List<Message>, Pag
   return repository.getMessagesUsingPagination(params.chatId, params.pageSize, params.pageNumber);
 });
 
-final chatsProvider = FutureProvider<List<Chat>>((ref) {
+final chatsProvider = FutureProvider.autoDispose<List<Chat>>((ref) {
   final repository = ref.read(chatRepositoryProvider);
   return repository.getChats();
 });

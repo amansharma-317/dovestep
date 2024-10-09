@@ -44,11 +44,11 @@ String timeAgo(DateTime timestamp) {
   } else if (difference.inMinutes < 60) {
     return '${difference.inMinutes}min${difference.inMinutes == 1 ? '' : 's'}';
   } else if (difference.inHours < 24) {
-    return '${difference.inHours}h${difference.inHours == 1 ? '' : 's'}';
+    return '${difference.inHours}h${difference.inHours == 1 ? '' : ''}';
   } else if (difference.inDays < 7) {
-    return '${difference.inDays}d${difference.inDays == 1 ? '' : 's'}';
+    return '${difference.inDays}d${difference.inDays == 1 ? '' : ''}';
   } else {
-    return '${(difference.inDays / 7).floor()} week${(difference.inDays / 7).floor() == 1 ? '' : 's'}';
+    return '${(difference.inDays / 7).floor()} w${(difference.inDays / 7).floor() == 1 ? '' : ''}';
   }
 }
 

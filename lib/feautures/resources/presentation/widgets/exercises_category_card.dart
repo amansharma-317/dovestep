@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class ExercisesCategoryCard extends StatelessWidget {
@@ -25,6 +26,13 @@ class ExercisesCategoryCard extends StatelessWidget {
       );
     }
 
+    List<String> imagePaths = [
+      'assets/images/self-esteem.svg',
+      'assets/images/anxiety.svg',
+      'assets/images/sleep.svg',
+      'assets/images/Stress.svg',
+    ];
+
     return Container(
       padding: EdgeInsets.all(8),
       decoration: decoration,
@@ -34,7 +42,7 @@ class ExercisesCategoryCard extends StatelessWidget {
         children: [
           Expanded(
               flex: 4,
-              child: Image.network('https://img.freepik.com/free-vector/happy-freelancer-with-computer-home-young-man-sitting-armchair-using-laptop-chatting-online-smiling-vector-illustration-distance-work-online-learning-freelance_74855-8401.jpg?w=1060&t=st=1706620112~exp=1706620712~hmac=1907980c6101679c01dbc100abdfbba840b5d80a55ef41ead6d4c0b4f8b3a51b')),
+              child: SvgPicture.asset(imagePaths[index], fit: BoxFit.fill,),),
           SizedBox(height: 8,),
           Expanded(
             flex: 1,
